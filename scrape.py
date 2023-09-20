@@ -7,8 +7,9 @@ import requests
 from bs4 import BeautifulSoup
 
 DOMAIN = 'http://www.autotrader.ca'
-START_URL = DOMAIN + '/auto/zoeken/'
+START_URL = DOMAIN + '/cars'
 CONTENT_ROOT = '/home/val/Pictures/crawler/'
+
 
 def do_work(data):
     directory = os.path.join(CONTENT_ROOT,data.get('slug'))
@@ -18,6 +19,7 @@ def do_work(data):
     filename = url.split('/').pop()
     try:
         r = requests.get(url, stream=True)
+        print('request got')
     except:
         print('Skipped image %s' % url)
         return
@@ -58,6 +60,7 @@ def item_page(url, slug, year):
                 'slug':slug,
                 'year': year
             }
+            print(data)
             q.put(data)
             break
 
@@ -66,14 +69,17 @@ def overview_page(start=0, end=1):
     for i in range(start, end):
         params = {}
         if i > 0:
-            params['zoekopdracht'] = i + 1
+            params['search'] = i + 1
 
         try:
             r = requests.get(START_URL, params=params)
+            print(START_URL)
+            
         except:
             print('Skipped page %s' % (i+1))
             continue
         soup = BeautifulSoup(r.text, "lxml")
+        print(r.text)
 
         for section in soup.find_all('section'):
             classes = section.get('class')
