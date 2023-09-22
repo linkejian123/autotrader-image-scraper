@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
 # 设置保存路径
-path = r'/home/val/Pictures/crawler/ '
+path = r'/home/kyber/Pictures/crawler/'
 user_agent = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",
@@ -44,30 +44,46 @@ def get_img(url):
     
     # bs search for keyword
 
-    img_src = soup.find_all('img', {"data-testid": "listing-card-image"},limit=10)
-    print('img src parsing result')
-    for item in img_src:
-        print(item, '\n')
+    img_src = soup.find_all('img', {"data-testid": "listing-card-image"})
+    # print('img src parsing result')
+    # for item in img_src:
+    #     print(item, '\n')
         
-        
+     
     print('========================================================')
-    img_alt = img_src.get('alt')
-    print('########################################################')
-    print(img_alt)
-    
-    exit() # temp stop
-    for src, name in zip(img_src, img_alt):
-        img_content = requests.get(src, headers=headers).content
-        img_name = name + '.jpg'
+    key_word = 'media'  # keyword in url to check desired pic
+
+    all_address = []
+    all_title = []
+  
+    for entry in img_src:
+        address = entry.get('src')
+        title = entry.get('alt')
+        if key_word in address:
+
+            all_address.append(address)
+            all_title.append(title)
+
+
+    data_pack = zip(all_address, all_title)
+
+    # print(set(data_pack))
+
+
+    for img_address, img_desc in data_pack:
+        print(img_desc, '\n')
+        img_content = requests.get(address, headers=headers).content
+        img_name = img_desc[:15] + '.jpg'
+
         with open(path + img_name, 'wb') as f:  # 图片保存到本地
             print(f"now downloading：{img_name}")
+            f.write(img_content)
             f.close()
-            # f.write(img_content)
     time.sleep(random.randint(1, 2))
 
 def main():
     # 要请求的url列表  https://www.kijiji.ca/b-cars-trucks/ontario/page-2 https://www.kijiji.ca/b-cars-trucks/ontario/page-3
-    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 4)]
+    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 500)]
     print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
