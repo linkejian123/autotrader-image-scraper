@@ -12,6 +12,8 @@ list = {('https://media.kijiji.ca/api/v1/autos-prod-ads/images/03/03a27501-e889-
 
 for img_address, img_desc in list:
         print(img_address, '\n')
+        address = str(adress).replace("kijijica-200", "kijijica-640")
+        print(address)
         img_content = requests.get(img_address, headers).content
         img_name = img_desc[:10] + '.jpg'
 

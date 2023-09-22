@@ -60,7 +60,9 @@ def get_img(url):
         address = entry.get('src')
         title = entry.get('alt')
         if key_word in address:
-
+            print(address)
+            address = address.replace("kijijica-200", "kijijica-720")
+            print(address)
             all_address.append(address)
             all_title.append(title)
 
@@ -83,12 +85,12 @@ def get_img(url):
 
 def main():
     # 要请求的url列表  https://www.kijiji.ca/b-cars-trucks/ontario/page-2 https://www.kijiji.ca/b-cars-trucks/ontario/page-3
-    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 500)]
-    print(url_list)
+    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 1500)]
+    # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
     delta = (datetime.datetime.now() - start).total_seconds()
-    print(f"craling time:{delta}s")
+    print(f"crawling time:{delta}s")
 
 
 if __name__ == '__main__':
