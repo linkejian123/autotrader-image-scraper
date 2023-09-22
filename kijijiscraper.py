@@ -28,32 +28,38 @@ start = datetime.datetime.now()
 def get_img(url):
     headers = {
         "User-Agent": random.choice(user_agent),
-        "Referer": "http://pic.netbian.com/4kqich/index.html"
+        "Referer": "https://www.kijiji.ca/b-cars-trucks/ontario/"
     }
     # 发送请求  获取响应
     response = requests.get(url, headers=headers)
+    print('response=', response)
     # 打印网页源代码来看  乱码   重新设置编码解决编码问题
     # 内容正常显示  便于之后提取数据
     response.encoding = 'GBK'
     html = etree.HTML(response.text)
+    # print(html.text) # kijiji got 200 
+    
     # xpath定位提取想要的数据  得到图片链接和名称
-    img_src = html.xpath('//ul[@class="clearfix"]/li/a/img/@src')
-    print('img src', img_src)
-    # 列表推导式   得到真正的图片url
-    img_src = ['http://pic.netbian.com' + x for x in img_src]
-    img_alt = html.xpath('//ul[@class="clearfix"]/li/a/img/@alt')
-    print('img_alt', img_alt)
+    # img_src = html.xpath('//ul[@class="clearfix"]/li/a/img/@src')
+    img_src = html.xpath('//li[@data-testid=""]')
+    print('img src parsing result', img_src)
+    
+    # edit imgsrc to get true url to pic
+    # img_src = ['http://pic.netbian.com' + x for x in img_src]
+    img_alt = html.xpath('//ul[@class="clearfix"]/li/a/img/@alt') # alt to get name
     for src, name in zip(img_src, img_alt):
         img_content = requests.get(src, headers=headers).content
         img_name = name + '.jpg'
         with open(path + img_name, 'wb') as f:  # 图片保存到本地
             print(f"now downloading：{img_name}")
+            f.close()
             # f.write(img_content)
     time.sleep(random.randint(1, 2))
 
 def main():
-    # 要请求的url列表
-    url_list = ['http://pic.netbian.com/4kqiche/index.html'] + [f'http://pic.netbian.com/4kqiche/index_{i}.html' for i in range(2, 4)]
+    # 要请求的url列表  https://www.kijiji.ca/b-cars-trucks/ontario/page-2 https://www.kijiji.ca/b-cars-trucks/ontario/page-3
+    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 4)]
+    print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
     delta = (datetime.datetime.now() - start).total_seconds()
