@@ -3,6 +3,7 @@ from lxml import etree
 import datetime
 import time
 import random
+from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
 # 设置保存路径
@@ -33,20 +34,28 @@ def get_img(url):
     # 发送请求  获取响应
     response = requests.get(url, headers=headers)
     print('response=', response)
-    # 打印网页源代码来看  乱码   重新设置编码解决编码问题
-    # 内容正常显示  便于之后提取数据
-    response.encoding = 'GBK'
+
+    # response.encoding = 'GBK'
+    # print(response.text) # got the html
     html = etree.HTML(response.text)
-    # print(html.text) # kijiji got 200 
     
-    # xpath定位提取想要的数据  得到图片链接和名称
-    # img_src = html.xpath('//ul[@class="clearfix"]/li/a/img/@src')
-    img_src = html.xpath('//li[@data-testid=""]')
-    print('img src parsing result', img_src)
+    # try bs4 here
+    soup = BeautifulSoup(response.content, 'html.parser')
     
-    # edit imgsrc to get true url to pic
-    # img_src = ['http://pic.netbian.com' + x for x in img_src]
-    img_alt = html.xpath('//ul[@class="clearfix"]/li/a/img/@alt') # alt to get name
+    # bs search for keyword
+
+    img_src = soup.find_all('img', {"data-testid": "listing-card-image"},limit=10)
+    print('img src parsing result')
+    for item in img_src:
+        print(item, '\n')
+        
+        
+    print('========================================================')
+    img_alt = img_src.get('alt')
+    print('########################################################')
+    print(img_alt)
+    
+    exit() # temp stop
     for src, name in zip(img_src, img_alt):
         img_content = requests.get(src, headers=headers).content
         img_name = name + '.jpg'
@@ -65,5 +74,7 @@ def main():
     delta = (datetime.datetime.now() - start).total_seconds()
     print(f"craling time:{delta}s")
 
+
 if __name__ == '__main__':
     main()
+    
