@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
 # 设置保存路径
-path = r'/home/kyber/Pictures/crawler/'
+path = r'/home/val/Pictures/crawler/'
 user_agent = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",
@@ -85,7 +85,7 @@ def get_img(url):
 
 def main():
     # 要请求的url列表  https://www.kijiji.ca/b-cars-trucks/ontario/page-2 https://www.kijiji.ca/b-cars-trucks/ontario/page-3
-    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 1500)]
+    url_list = ['https://www.kijiji.ca/b-cars-trucks/canada/c174l0?sort=dateDesc'] + [f'https://www.kijiji.ca/b-cars-trucks/canada/page-{i}/c174l0?sort=dateDesc' for i in range(2, 100)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)

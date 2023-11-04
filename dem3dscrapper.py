@@ -11,17 +11,14 @@ import sys
 from pathlib import Path
 from typing import Tuple
 
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from openvino.runtime import Core
-
 sys.path.append("../utils")
-import notebook_utils as utils
+
 
 
 # 设置保存路径
-path = r'/home/kyber/Pictures/crawler2/'
+path = r'/home/val/Pictures/crawler2/'
+
+
 user_agent = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",
@@ -64,10 +61,6 @@ def check360(son_url):  # checked with ground truth, it works
         # print('no 360')
         return False
     
-    
-    
-
-
 def get_img(url):
     headers = {
         "User-Agent": random.choice(user_agent),
@@ -110,18 +103,19 @@ def get_img(url):
             print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
             print(title)
             print('YYYYYYYYYYYYYYYYYYYYYYYYYYYYY')
-            son_address360 = son_address + '/#360view'
+            son_address360 = son_address + '#360view'
             
-            save_img(son_address360)
-            
-            
+            save_img(son_address360)          
         else:
             continue
 
     print('FFFFFFFFFFFFFFFFFf')
 
+
 def save_img(url):
     print(url)
+    with open("/home/val/Pictures/crawler2/list.txt", "a") as myfile:
+        myfile.write(str(url)+'\n')
 
 
     # for img_address, img_desc in data_pack:
@@ -141,7 +135,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 5)]
+    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 379)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
