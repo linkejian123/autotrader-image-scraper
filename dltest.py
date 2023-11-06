@@ -5,7 +5,7 @@ from lxml import etree
 from bs4 import BeautifulSoup
 import os
 # test save catche
-url = 'https://3dmodels.org/3d-models/lexus-tx-premium-us-spec-2023/#360view'
+url = 'https://3dmodels.org/360-view/?id=231543'
 # 设置保存路径
 path = r'/home/kyber/Pictures/crawler2/'
 user_agent = [
@@ -33,8 +33,10 @@ page360 = requests.get(url, headers=headers)
     
 # try bs4 here
 soup = BeautifulSoup(page360.content, 'html.parser')
-result = soup.find_all('input', {"class": "spritespin-slider"})
-for entry in result:
+result = soup.find('div', {'id':'view-box'})
+result1 = result.children
+print(result1)
+# for entry in result:
     
-    print(entry.attrs)
-    print(entry.contents)
+#     print(entry.attrs)
+#     print(entry.contents)
