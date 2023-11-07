@@ -37,7 +37,7 @@ user_agent = [
     ]
 start = datetime.datetime.now()
 
-def check360(son_url):  # checked with ground truth, it works
+def check360(son_url, title):  # checked with ground truth, it works
 
     headers = {
         "User-Agent": random.choice(user_agent),
@@ -58,7 +58,7 @@ def check360(son_url):  # checked with ground truth, it works
     if result:
         for entry in result:
             model_url = entry.get('href')
-        save_img(model_url)
+        save_img(model_url, title)
         print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
         return True
     else:
@@ -88,10 +88,6 @@ def get_img(url):
     # print(son_page_list)
     
     print('========================================================')
-    key_word = '/#360view'  # keyword in url to check desired pic
-
-    all_address = []
-    all_title = []
     counter = 0
 
     for entry in son_page_list:
@@ -103,9 +99,8 @@ def get_img(url):
 
         # print(son_address)
         
-        checker = check360(son_address)
+        checker = check360(son_address, title)
         if checker is True:
-            print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
             print(title)
             print('YYYYYYYYYYYYYYYYYYYYYYYYYYYYY')
             
@@ -116,10 +111,10 @@ def get_img(url):
     print('FFFFFFFFFFFFFFFFFf')
 
 
-def save_img(url):
+def save_img(url, title):
     print(url)
     with open("/home/val/Pictures/crawler2/list.txt", "a") as myfile:
-        myfile.write(str(url)+'\n')
+        myfile.write(str(title)+', '+str(url)+'\n')
 
 
     # for img_address, img_desc in data_pack:
