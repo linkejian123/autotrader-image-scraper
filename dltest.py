@@ -1,11 +1,12 @@
 
 import requests
 import random
+import re
 from lxml import etree
 from bs4 import BeautifulSoup
 import os
 # test save catche
-url = 'https://3dmodels.org/3d-models/lexus-tx-premium-us-spec-2023/#360view'
+url = 'https://3dmodels.org/360-view/?id=235798'
 # 设置保存路径
 path = r'/home/kyber/Pictures/crawler2/'
 user_agent = [
@@ -29,12 +30,35 @@ headers = {
         "Referer": "https://3dmodels.org/3d-models/lexus-tx-premium-us-spec-2023"
     }
 page360 = requests.get(url, headers=headers)
-# html = etree.HTML(page360.text)
+html = etree.HTML(page360.text)
+
     
 # try bs4 here
 soup = BeautifulSoup(page360.content, 'html.parser')
-result = soup.find_all('input', {"class": "spritespin-slider"})
-for entry in result:
-    
-    print(entry.attrs)
-    print(entry.contents)
+
+script_tags = soup.find_all('script')
+
+# Search for the script containing 'preload' matrix
+for script_tag in script_tags:
+    if 'preload' in script_tag.text:
+        # Extract the JavaScript content
+        javascript_code = script_tag.text
+        
+        # Now, you can work with the JavaScript code to extract the 'preload' matrix
+        # You may use regular expressions or other parsing techniques
+
+        # For demonstration, let's print the entire JavaScript code:
+        print(javascript_code)
+
+preload_pattern = re.compile(r'preload\(\[([\s\S]*?)\]\);')
+match = preload_pattern.search(javascript_code)
+
+if match:
+    preload_matrix_text = match.group(1).strip()  # Extract the content of the matrix
+    # Split the matrix into individual URLs
+    url_list = preload_matrix_text.split(',')
+    # Optionally, you can further clean up the URLs, remove leading/trailing spaces, etc.
+    url_list = [url.strip() for url in url_list]
+    print(url_list)
+else:
+    print("No preload matrix found in the JavaScript code.")
