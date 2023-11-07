@@ -53,8 +53,12 @@ def check360(son_url):  # checked with ground truth, it works
     
     # try bs4 here
     soup = BeautifulSoup(response.content, 'html.parser')
-    result = soup.find_all('li', {"class": "launcher-360"})
+    result = soup.find_all('a', {"class": "zoom-links lt pos_abs over_hid cursor_p"})
+
     if result:
+        for entry in result:
+            model_url = entry.get('href')
+        save_img(model_url)
         print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
         return True
     else:
@@ -103,9 +107,8 @@ def get_img(url):
             print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
             print(title)
             print('YYYYYYYYYYYYYYYYYYYYYYYYYYYYY')
-            son_address360 = son_address + '#360view'
             
-            save_img(son_address360)          
+                      
         else:
             continue
 
@@ -114,7 +117,7 @@ def get_img(url):
 
 def save_img(url):
     print(url)
-    with open("/home/val/Pictures/crawler2/list.txt", "a") as myfile:
+    with open("/home/kyber/Pictures/crawler2/list.txt", "a") as myfile:
         myfile.write(str(url)+'\n')
 
 
@@ -135,7 +138,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 379)]
+    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 380)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
