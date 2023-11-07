@@ -48,7 +48,7 @@ for script_tag in script_tags:
         # You may use regular expressions or other parsing techniques
 
         # For demonstration, let's print the entire JavaScript code:
-        print(javascript_code)
+        # print(javascript_code)
 
 preload_pattern = re.compile(r'preload\(\[([\s\S]*?)\]\);')
 match = preload_pattern.search(javascript_code)

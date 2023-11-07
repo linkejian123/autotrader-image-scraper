@@ -66,6 +66,7 @@ def check360(son_url):  # checked with ground truth, it works
         return False
     
 def get_img(url):
+    print(f"Crawling page: {url}")
     headers = {
         "User-Agent": random.choice(user_agent),
         "Referer": "https://3dmodels.org/3d-models/vehicles/"
@@ -117,7 +118,7 @@ def get_img(url):
 
 def save_img(url):
     print(url)
-    with open("/home/kyber/Pictures/crawler2/list.txt", "a") as myfile:
+    with open("/home/val/Pictures/crawler2/list.txt", "a") as myfile:
         myfile.write(str(url)+'\n')
 
 
@@ -138,7 +139,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 380)]
+    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 5)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
