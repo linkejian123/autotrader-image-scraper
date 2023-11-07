@@ -1,6 +1,7 @@
 
 import requests
 import random
+import time
 import re
 from lxml import etree
 from bs4 import BeautifulSoup
@@ -63,7 +64,9 @@ def dl_img(url_list, car_path):
     for url in url_list:
         try:
             print('DDDDDDDDDDDDDDDDDDDDDDDDDD')
+            print(url)
             # Send an HTTP GET request to the URL
+            time.sleep(random.randint(1, 2))
             response = requests.get(url)
             response.raise_for_status()  # Check for any errors in the response
 
@@ -115,7 +118,7 @@ for title, url in full_list.items():
             # Split the matrix into individual URLs
             url_list = preload_matrix_text.split(',')
             # Remove quotation marks from each URL
-            url_list = [url.strip('"') for url in url_list]
+            url_list = [url.replace('"', '').replace("'", '').replace('\n', '').replace('\t', '') for url in url_list]
             dl_img(url_list, car_path)
             print(url_list)
         else:
