@@ -6,12 +6,12 @@ import re
 from lxml import etree
 from bs4 import BeautifulSoup
 import os
+import csv
 # test save catche
 # url = 'https://3dmodels.org/360-view/?id=235798'
 # 设置保存路径
-list_path = r'/home/val/Pictures/crawler2/list.txt'
-full_list = {}  # initialize full url dict
-dl_path = r'/home/val/Pictures/crawler2/'
+list_path = r'/home/kyber/Pictures/crawler2/url_list.csv'
+dl_path = r'/home/kyber/Pictures/crawler2/'
 
 # Create the parent directory if it doesn't exist
 os.makedirs(dl_path, exist_ok=True)
@@ -39,23 +39,18 @@ headers = {
     }
 
 # Open the file in read mode
+
+full_list = []
 if os.path.exists(list_path):
-    with open(list_path, 'r') as file:
-        # Loop through each line in the file
-        for line in file:
-             # Split each line by the comma and strip whitespace
-            values = [value.strip() for value in line.split(',')]
+    try:
+        with open(list_path, mode='r', newline='') as file:
+            reader = csv.reader(file)
+            header = next(reader)  # Read the header row
+            for row in reader:
+                data_list.append(row)
+    except Exception as e:
+        print(f"An error occurred while reading from CSV: {e}")
 
-            # Check if there are at least 2 values
-            if len(values) >= 2:
-                key, value = values[0], values[1]
-                # Add the key-value pair to the dictionary
-                full_list[key] = value
-            else:
-                print(f"Ignored line with insufficient values: {line.strip()}")
-
-    # Close the file
-    file.close()
 else:
     print("LIST FILE DOES NOT EXIST")
 
@@ -85,7 +80,10 @@ def dl_img(url_list, car_path):
             print(f"Error downloading image for {title}: {e}")
             
 
-for title, url in full_list.items(): 
+for row in full_list: 
+    serial, status, title, url = row
+
+def strip_imgurl(title, url):
     # Create a folder with the title as its name
     car_path = os.path.join(dl_path, title)
     os.makedirs(car_path, exist_ok=True)

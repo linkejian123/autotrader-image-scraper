@@ -5,6 +5,8 @@ import time
 import random
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+import csv
+import threading
 
 import os  # libs needed for car filtration
 import sys
@@ -16,7 +18,11 @@ sys.path.append("../utils")
 
 
 # 设置保存路径
-path = r'/home/val/Pictures/crawler2/'
+path = r'~/Pictures/crawler2/'
+call_counter = 0
+# Create a lock to synchronize access to the CSV file
+csv_lock = threading.Lock()
+
 
 
 user_agent = [
@@ -58,7 +64,7 @@ def check360(son_url, title):  # checked with ground truth, it works
     if result:
         for entry in result:
             model_url = entry.get('href')
-        save_img(model_url, title)
+        save_csv(model_url, title)
         print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
         return True
     else:
@@ -111,22 +117,30 @@ def get_img(url):
     print('FFFFFFFFFFFFFFFFFf')
 
 
-def save_img(url, title):
+def save_csv(url, title):
+    global call_counter
     print(url)
-    with open("/home/val/Pictures/crawler2/list.txt", "a") as myfile:
+
+    data = [call_counter, "N", title, url]
+    filename = os.path.expanduser('~/Pictures/crawler2/url_list.csv') 
+
+    try:
+        with csv_lock:
+         # Write the data to the CSV file
+            with open(filename, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(data)
+    except Exception as e:
+        print(f"An error occurred while writing to CSV: {e}")
+
+
+
+    with open("/home/kyber/Pictures/crawler2/list.txt", "a") as myfile:
         myfile.write(str(title)+', '+str(url)+'\n')
 
 
-    # for img_address, img_desc in data_pack:
-        # print(img_desc, '\n')
-        # img_content = requests.get(son_address, headers=headers).content
-        # img_name = img_desc[:20] + '.jpg'
-# 
-        # with open(path + img_name, 'wb') as f:  # 图片保存到本地
-            # print(f"now downloading：{img_name}")
-            # f.write(img_content)
-            # f.close()
-    time.sleep(random.randint(1, 2))
+    call_counter += 1
+
 
 
 
@@ -134,7 +148,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 5)]
+    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 3)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
