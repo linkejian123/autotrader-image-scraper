@@ -10,9 +10,9 @@ import csv
 # test save catche
 # url = 'https://3dmodels.org/360-view/?id=235798'
 # 设置保存路径
-list_path = r'/home/val/Pictures/crawler2/url_list.csv'
-dl_path = r'/home/val/Pictures/crawler2/'
-progress_path = r'/home/val/Pictures/crawler2/checker.txt'
+list_path = r'/home/kyber/Pictures/crawler2/url_list.csv'
+dl_path = r'/data/waffle1/crawl/dem360/'
+progress_path = r'/home/kyber/Pictures/crawler2/checker.txt'
 
 
 
@@ -30,10 +30,17 @@ def dl_img(url_list, car_path):
             # Extract the image data
             image_data = response.content
 
-            img_name = url.split("-")[-1]
+            img_name = url.split("/")[-1].split("-")[-1]
 
-            # Specify the file path within the folder using the extracted file name
-            file_path = os.path.join(car_path, img_name)
+            name, extension = os.path.splitext(img_name)
+            print(name)
+
+            # Generate the new filename with zero-padded numbers and create the file path
+            file_path = os.path.join(car_path, name.zfill(4)+extension)
+
+
+            # # Specify the file path within the folder using the extracted file name
+            # file_path = os.path.join(car_path, img_name)
 
             # Open the file in binary write mode and save the image data
             with open(file_path, "wb") as file:
@@ -134,6 +141,7 @@ with open(list_path, 'r', newline='') as file:
             continue  # Skip rows that have already been processed
         
         # Perform your processing on the row here
+        print(row)
         serial, status, title, url = row
         strip_imgurl(title, url)
         

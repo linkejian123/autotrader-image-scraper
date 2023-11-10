@@ -148,7 +148,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 3)]
+    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 380)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)
