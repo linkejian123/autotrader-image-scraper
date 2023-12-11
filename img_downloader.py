@@ -7,6 +7,7 @@ from lxml import etree
 from bs4 import BeautifulSoup
 import os
 import csv
+from threading import Thread
 # test save catche
 # url = 'https://3dmodels.org/360-view/?id=235798'
 # 设置保存路径
@@ -18,35 +19,44 @@ progress_path = r'/home/kyber/Pictures/crawler2/checker.txt'
 
 
 def dl_img(url_list, car_path):
+
+    threads = []
+
     for url in url_list:
-        try:
-            print('DDDDDDDDDDDDDDDDDDDDDDDDDD')
-            print(url)
-            # Send an HTTP GET request to the URL
-            time.sleep(random.randint(1, 2))
-            response = requests.get(url)
-            response.raise_for_status()  # Check for any errors in the response
+        thread = Thread(target=thread_dl, args=(url, car_path))
+        threads.append(thread)
+        thread.start()
 
-            # Extract the image data
-            image_data = response.content
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
 
-            img_name = url.split("/")[-1].split("-")[-1]
+def thread_dl(url, car_path):
+    try:
+        print('ddddddddd')
+        response = requests.get(url)
+        response.raise_for_status()  # Check for any errors in the response
 
-            name, extension = os.path.splitext(img_name)
-            print(name)
+        # Extract the image data
+        image_data = response.content
 
-            # Generate the new filename with zero-padded numbers and create the file path
-            file_path = os.path.join(car_path, name.zfill(4)+extension)
+        img_name = url.split("/")[-1].split("-")[-1]
+
+        name, extension = os.path.splitext(img_name)
+        print(f'Thread {Thread().ident} is downloading image {name}')
+
+                # Generate the new filename with zero-padded numbers and create the file path
+        file_path = os.path.join(car_path, name.zfill(4)+extension)
 
 
-            # # Specify the file path within the folder using the extracted file name
-            # file_path = os.path.join(car_path, img_name)
+        # # Specify the file path within the folder using the extracted file name
+        # file_path = os.path.join(car_path, img_name)
 
-            # Open the file in binary write mode and save the image data
-            with open(file_path, "wb") as file:
-                file.write(image_data)
-        except requests.exceptions.RequestException as e:
-            print(f"Error downloading image for {title}: {e}")
+        # Open the file in binary write mode and save the image data
+        with open(file_path, "wb") as file:
+            file.write(image_data)
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading image for {name}: {e}")
             
 
 
