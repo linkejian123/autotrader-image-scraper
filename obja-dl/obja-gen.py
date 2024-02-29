@@ -1,3 +1,5 @@
+## generate picture from blender using glb file
+
 import bpy
 import os
 import math
