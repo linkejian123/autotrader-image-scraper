@@ -3,7 +3,7 @@ import os
 import math
 from mathutils import Vector 
 
-path_to_glb_folder = "/data/waffle1/crawl/objaverse/hf-objaverse-v1/glbs/000-000/"
+path_to_glb_folder = "/data/waffle1/crawl/objaverse/hf-objaverse-v1/glbs/000-000/f8024595e11c48119877c9c7cc554abc.glb"
 path_to_jpeg_folder = "/data/waffle1/crawl/objaverse/hf-objaverse-v1/images/"
 num_photos = 20  # Number of photos to capture (360 degrees / 60 degrees interval)
 

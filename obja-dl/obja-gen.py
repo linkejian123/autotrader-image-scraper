@@ -7,10 +7,17 @@ from mathutils import Vector
 import numpy as np
 
 ## This made from blender build in 
+<<<<<<< HEAD
 path_to_glb_folder = "/data/waffle1/crawl/objaverse/bikes/bicycle.glb" #4abc good
 path_to_jpeg_folder = "/data/waffle1/crawl/objaverse/bikes/images/"
 num_photos = 20  # Number of photos to capture (360 degrees / 60 degrees interval)
 
+=======
+path_to_glb_folder = "/data/waffle1/crawl/objaverse/hf-objaverse-v1/glbs/000-000/f8024595e11c48119877c9c7cc554abc.glb" #4abc good
+path_to_jpeg_folder = "/data/waffle1/crawl/objaverse/hf-objaverse-v1/images/"
+num_photos = 15  # Number of photos to capture (360 degrees / 60 degrees interval)
+radius = math.sqrt(169+169)
+>>>>>>> in blender with tracking
 
 def purge_orphans():
     if bpy.app.version >= (3, 0, 0):
@@ -54,6 +61,7 @@ def clean_scene():
 
     purge_orphans()
 
+<<<<<<< HEAD
 def rotation_matrix(axis, theta):
     """
     Return the rotation matrix associated with counterclockwise rotation about
@@ -113,6 +121,10 @@ def get_calibration_matrix_K_from_blender(camd):
     return K
 
 
+=======
+clean_scene()
+
+>>>>>>> in blender with tracking
 
 # import one model
 car_object = bpy.ops.import_scene.gltf(filepath=path_to_glb_folder)
@@ -120,6 +132,7 @@ obj_focus = bpy.data.objects['Sketchfab_model']
 bpy.context.object.display_type = 'TEXTURED'
 
 
+<<<<<<< HEAD
 #try white background
 bpy.data.worlds["World"].node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 0.5)
 
@@ -142,11 +155,43 @@ area_light = bpy.context.active_object.data
 area_light.size = 7  # Set the size of the area light
 area_light = bpy.context.active_object.data
 area_light.energy = 100  # Set the energy of the area l
+=======
+
+
+# Add sun lamp
+bpy.ops.object.light_add(type='SUN', align='WORLD', location=(0, 0, 10))
+
+# Set sun lamp properties
+sun = bpy.context.active_object.data
+sun.energy = 5.0  # Adjust the intensity of the sunlight
+sun.angle = 0.5  # Adjust the size of the sun disc
+
+
+
+
+# initialize camera and tracking
+bpy.ops.object.camera_add(location=(obj_focus.location.x+13, obj_focus.location.y+13, obj_focus.location.z + 2), 
+                                rotation=(math.radians(90), 0, math.radians(45)))
+camera = bpy.context.object
+camera.data.lens = 15  # Set focal length to 20mm
+bpy.ops.object.constraint_add(type='TRACK_TO') # set track 
+bpy.context.object.constraints["Track To"].target = bpy.data.objects[1] 
+
+
+# Add area light at the same location as the camera
+bpy.ops.object.light_add(type='AREA', align='WORLD', location=(camera.location.x, camera.location.y, camera.location.z))
+area_light = bpy.context.active_object.data
+area_light.size = 5  # Set the size of the area light
+area_light = bpy.context.active_object.data
+area_light.size = 5  # Set the size of the area light
+area_light.energy = 1000  # Set the energy of the area l
+>>>>>>> in blender with tracking
 
 # Add track to constraint
 bpy.ops.object.constraint_add(type='TRACK_TO')
 
 # Set track to constraint target
+<<<<<<< HEAD
 bpy.context.object.constraints["Track To"].target = bpy.data.objects[1]
 
 # initialize camera and tracking
@@ -156,6 +201,9 @@ camera = bpy.context.object
 camera.data.lens = 20  # Set focal length to 20mm
 bpy.ops.object.constraint_add(type='TRACK_TO') # set track 
 bpy.context.object.constraints["Track To"].target = bpy.data.objects[2] 
+=======
+bpy.context.object.constraints["Track To"].target = bpy.data.objects[2]
+>>>>>>> in blender with tracking
 
 
 
@@ -169,26 +217,42 @@ bpy.context.scene.view_settings.look = 'High Contrast'
 # Set the number of samples for Cycles render engine
 bpy.context.scene.cycles.samples = 500  # Adjust the number of rend
 bpy.context.scene.eevee.taa_render_samples = 16
+<<<<<<< HEAD
 bpy.context.scene.render.resolution_x = 1024
 bpy.context.scene.render.resolution_y = 1024  #set resolution of final pic
 
+=======
+>>>>>>> in blender with tracking
 
 
 # Animate the camera in a circular motion
 angle_increment = 360 / num_photos
 for frame in range(num_photos):
+<<<<<<< HEAD
     current_cam = camera.location
     new_cam = rotate(current_cam, angle_increment, axis=(0,0,1))
     camera.location = new_cam
 #    area_light.location = new_cam
     
     bpy.context.scene.camera = bpy.context.view_layer.objects.active
+=======
+    angle = frame * (2 * math.pi) / num_photos
+    bpy.context.scene.camera = bpy.context.view_layer.objects.active
+    bpy.context.scene.frame_set(frame + 1)
+    
+    current_angle = math.radians((frame - 1) * angle_increment)
+
+    # Set the new location for the camera in a circular motion
+    camera.location.x = obj_focus.location.x + radius * math.cos(current_angle)
+    camera.location.y = obj_focus.location.y + radius * math.sin(current_angle)
+>>>>>>> in blender with tracking
     
     bpy.context.scene.frame_set(frame)
     
     print('!!!!!!!!!!')
     print(camera.location.x, camera.location.y, camera.location.z)
 
+<<<<<<< HEAD
 
   # Render image for each frame
     glb_file = os.path.basename(path_to_glb_folder)
@@ -206,6 +270,24 @@ print(bpy.data.objects[1])
 
 K = get_calibration_matrix_K_from_blender(bpy.data.objects['Camera'].data)
 print(K)
+=======
+    # Set the new rotation for the camera
+    camera.rotation_euler.z = current_angle + math.radians(45)
+
+    # Render image for each frame
+    glb_file = r'f8024595e11c48119877c9c7cc554abc.glb'
+    bpy.context.scene.render.filepath = os.path.join(path_to_jpeg_folder, f"{glb_file.replace('.glb', '_')}_{frame + 1}.jpg")
+    bpy.ops.render.render(write_still=True)
+
+## Set the last frame to ensure the final state is captured
+#bpy.context.scene.frame_set(num_photos)
+
+
+
+
+print(bpy.data.objects[1])
+
+>>>>>>> in blender with tracking
                             
 print(bpy.data.objects['Sketchfab_model'].location.x)
 
@@ -240,4 +322,8 @@ print(bpy.data.objects['Sketchfab_model'].location.x)
 #    # Reset frame to 1 for the next glb file
 #    bpy.context.scene.frame_set(1)
 
+<<<<<<< HEAD
 #clean_scene()
+=======
+#clean_scene()
+>>>>>>> in blender with tracking
