@@ -18,7 +18,7 @@ sys.path.append("../utils")
 
 
 # 设置保存路径
-path = r'~/Pictures/crawler2/'
+path = r'/data/waffle1/crawl/scooter/'
 call_counter = 0
 # Create a lock to synchronize access to the CSV file
 csv_lock = threading.Lock()
@@ -122,7 +122,7 @@ def save_csv(url, title):
     print(url)
 
     data = [call_counter, "N", title, url]
-    filename = os.path.expanduser('~/Pictures/crawler2/url_list.csv') 
+    filename = os.path.expanduser('/data/waffle1/crawl/scooter/url_list.csv') 
 
     try:
         with csv_lock:
@@ -135,7 +135,7 @@ def save_csv(url, title):
 
 
 
-    with open("/home/kyber/Pictures/crawler2/list.txt", "a") as myfile:
+    with open("/data/waffle1/crawl/scooter/url_list.txt", "a") as myfile:
         myfile.write(str(title)+', '+str(url)+'\n')
 
 
@@ -148,7 +148,7 @@ def main():
 
 
     # 要请求的url列表  https://3dmodels.org/3d-models/vehicles/page/2/
-    url_list = ['https://3dmodels.org/3d-models/vehicles/'] + [f'https://3dmodels.org/3d-models/vehicles/page/{i}/' for i in range(2, 380)]
+    url_list = ['https://3dmodels.org/?s=scooter'] + [f'https://3dmodels.org/page/{i}/?s=scooter' for i in range(2, 4)]
     # print(url_list)
     with ThreadPoolExecutor(max_workers=6) as executor:
         executor.map(get_img, url_list)

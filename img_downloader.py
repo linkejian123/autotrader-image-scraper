@@ -11,9 +11,9 @@ from threading import Thread
 # test save catche
 # url = 'https://3dmodels.org/360-view/?id=235798'
 # 设置保存路径
-list_path = r'/home/kyber/Pictures/crawler2/url_list.csv'
-dl_path = r'/data/waffle1/crawl/dem360/'
-progress_path = r'/home/kyber/Pictures/crawler2/checker.txt'
+list_path = r'/data/waffle1/crawl/scooter/url_list.csv'
+dl_path = r'/data/waffle1/crawl/scooter/data/'
+progress_path = r'/data/waffle1/crawl/scooter/checker.txt'
 
 
 
